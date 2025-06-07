@@ -50,6 +50,7 @@ class Party():
 		self.r_vect = {}
 		self.final_result = None
 		self.advert_start_count = 0
+		self.advert_count_threshold = 3
 		self.version = version
 		self.stop_prot = False
 
@@ -663,7 +664,7 @@ class Party():
 		self.log("AWAITING")
 
 		begin = time.time()
-		while len(self.known_parties) < 2 and self.advert_start_count < 3:
+		while self.advert_start_count < self.advert_count_threshold:
 			if time.time() - begin >= self.timeout:
 				frame = Frame.Frame(Frame.Frame.ADVERT, self.version, self.party_id, self.party_id)
 				message = Link.Message(Link.Message.FRAME, self.networkInterface.get_addr(), frame)
