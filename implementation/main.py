@@ -685,6 +685,7 @@ VERSION = None
 
 BEGIN_TIME = 0
 START_ADVERT_COUNT = 0
+ADVERT_COUNT_THRESHOLD = 3
 
 start_pin = machine.Pin(25, machine.Pin.OUT)
 awaiting_pin = machine.Pin(26, machine.Pin.OUT)
@@ -756,6 +757,7 @@ def loop():
 	global SELF
 	global LAST_RCVD_TIME
 	global VERSION
+	global ADVERT_COUNT_THRESHOLD
 	global TIMEOUT
 	global SANITY_PASSED
 	global GATE_COUNT
@@ -773,7 +775,7 @@ def loop():
 	if SELF.state == Party.AWAITING:
 		t = time.time()
 		delta = t - BEGIN_TIME
-		if START_ADVERT_COUNT < 3 and delta >= TIMEOUT//2:
+		if START_ADVERT_COUNT < ADVERT_COUNT_THRESHOLD and delta >= TIMEOUT//2:
 			new_frame = Frame(Frame.ADVERT, Frame.PCEPS, PARTY_ID, PARTY_ID)
 			new_message = Message(Message.FRAME, (IP, PORT), new_frame)
 			log("broadcasting advertisement")
