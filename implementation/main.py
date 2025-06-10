@@ -667,6 +667,8 @@ SHARES_CHECKED = False
 ssid = %SSID%
 password = %PASSWORD%
 
+BROADCAST_ADDR = %BROADCAST ADDRESS%
+
 WLAN = None
 PARTY_ID = %party_id%
 
@@ -752,7 +754,6 @@ def start():
 	awaiting_pin.on()
 	VERSION = Frame.PCEPS
 
-	BROADCAST_ADDR = %BROADCAST ADDRESS%
 def loop():
 	global SELF
 	global LAST_RCVD_TIME
@@ -766,6 +767,7 @@ def loop():
 	global QUIT
 	global SHARES_CHECKED
 	global INPUT_SET
+	global BROADCAST_ADDR
 
 	try:
 		data, (addr, port) = S.recvfrom(128)
@@ -981,17 +983,18 @@ def loop():
 						log("my shares = " + str(shares[s_id]))
 					else:
 						log("sending share " + str(shares[s_id]) + " to " + str(s_id) + ' ' + str(SELF.known_parties[s_id]))
+						"""
+						# create malicious payload here such as:
 						if s_id == 2:
-							#create malicious payload here such as:
-							"""
 							log("sending malicious payload to pid 2!")
 							new_frame = Frame(Frame.SHARE, VERSION, PARTY_ID, (shares[s_id]+2000)%SELF.prime_p)
-
-							#instead of
-							"""
-							new_frame = Frame(Frame.SHARE, VERSION, PARTY_ID, shares[s_id] % SELF.prime_p)
 						else:
-							new_frame = Frame(Frame.SHARE, VERSION, PARTY_ID, shares[s_id])
+							new_frame = Frame(Frame.SHARE, VERSION, PARTY_ID, shares[s_id] % SELF.prime_p)
+							
+						# instead of
+						"""
+						new_frame = Frame(Frame.SHARE, VERSION, PARTY_ID, shares[s_id] % SELF.prime_p)
+
 						new_message = Message(Message.FRAME, (IP, PORT), new_frame)
 						S.sendto(new_message.to_bytes(), SELF.known_parties[s_id])
 
